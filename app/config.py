@@ -13,10 +13,10 @@ class Settings(BaseSettings):
     ALGORITHM: str
     ACCESS_TOKEN_EXPIRE_MINUTES: int
 
-    smtp_host: str
-    smtp_port: str
-    smtp_username: str
-    smtp_password: str
+    SMTP_HOST: str
+    SMTP_PORT: int
+    SMTP_USER: str
+    SMTP_PASS: str
 
     @property
     def DATABASE_URL(self):

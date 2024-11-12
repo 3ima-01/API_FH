@@ -1,3 +1,4 @@
+from random import randint
 from jose import jwt, JWTError
 from fastapi import Depends, HTTPException, Request
 
@@ -10,6 +11,10 @@ def get_token(request: Request):
     if not token:
         raise HTTPException(status_code=401, detail="User not authorized")
     return token
+
+
+def generate_verify_code():
+    return randint(100000, 999999)
 
 
 async def get_current_user(token: str = Depends(get_token)):

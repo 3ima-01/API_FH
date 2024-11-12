@@ -17,3 +17,11 @@ class User(Base):
     )
 
     poins = relationship("Point", back_populates="user")
+
+
+class UnverifiedUsers(Base):
+    __tablename__ = "unverified_users"
+    uuid: Mapped[UUID] = mapped_column(CHAR(36), primary_key=True, default=uuid4)
+    email: Mapped[str] = mapped_column(String(255), unique=True)
+    password: Mapped[str] = mapped_column(String(255))
+    verify_code: Mapped[str] = mapped_column(String(255), unique=True)

@@ -10,7 +10,7 @@ from alembic import context
 from app.database import Base
 from app.config import settings
 
-from app.users.models import User
+from app.users.models import User, UnverifiedUsers
 from app.points.models import Point
 
 # this is the Alembic Config object, which provides
