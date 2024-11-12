@@ -16,7 +16,8 @@ class User(Base):
         default=text("False"), server_default=text("False")
     )
 
-    poins = relationship("Point", back_populates="user")
+    profile = relationship("Profile", back_populates="user")
+    points = relationship("Point", back_populates="user")
 
 
 class UnverifiedUsers(Base):

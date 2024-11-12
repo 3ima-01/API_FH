@@ -9,6 +9,9 @@ class AppException(HTTPException):
         super().__init__(status_code=self.status_code, detail=self.detail)
 
 
+# ___Users___#
+
+
 class UserAlreadyExistsException(AppException):
     status_code = 409
     detail = "Пользователь уже существует"
@@ -19,6 +22,9 @@ class UserLoginException(AppException):
     detail = "Неверный email или пароль"
 
 
+# __________#
+
+
 class PointNotFoundException(AppException):
     status_code = 404
     detail = "Точка не найдена"
@@ -27,3 +33,13 @@ class PointNotFoundException(AppException):
 class NotYourPointException(AppException):
     status_code = 403
     detail = "Это не ваша точка"
+
+
+class PermissionDeniedException(AppException):
+    status_code = 403
+    detail = "Недостаточно прав"
+
+
+class SMTPException(AppException):
+    status_code = 500
+    detail = "Ошибка при отправке сообщения"

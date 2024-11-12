@@ -2,9 +2,16 @@ from fastapi import APIRouter, Response, Depends
 
 from app.auth import auth
 from app.users import schemas
+
 from app.users.dao import UserDAO, UnverifiedUsersDAO
+from app.profiles.dao import ProfileDAO
+
 from app.users.dependencies import get_current_user, generate_verify_code
-from app.exceptions import UserAlreadyExistsException, UserLoginException
+from app.exceptions import (
+    UserAlreadyExistsException,
+    UserLoginException,
+    PermissionDeniedException,
+)
 
 from app.smtp.smtp import send_confirmation_code
 
@@ -23,7 +30,7 @@ async def register_unverified_user(
         email=user_data.email
     ) or await UserDAO.find_one_or_none(email=user_data.email)
     if existing_user:
-        return {"details": "Пользователь с таким email уже существует"}
+        raise UserAlreadyExistsException
     hashed_password = auth.get_password_hash(user_data.password)
     await send_confirmation_code(user_data.email, "Регистрация", verify_code)
     await UnverifiedUsersDAO.create(
@@ -48,6 +55,9 @@ async def register_user(email: str, verify_code):
         email=user_data.email,
         password=user_data.password,
     )
+    new_user = await UserDAO.find_one_or_none(email=user_data.email)
+    await ProfileDAO.create(user_uuid=new_user.uuid, name=new_user.uuid)
+
     await UnverifiedUsersDAO.delete(email=user_data.email)
     return {"details": "Пользователь успешно создан"}
 
@@ -68,12 +78,8 @@ async def logout_user(response: Response):
     return {"details": "Пользователь вышел из системы"}
 
 
-@router_user.get("/me")
-async def user_me(current_user=Depends(get_current_user)):
-    return current_user
-
-
-@router_user.get("/{user_uuid}")
-async def get_user_by_id(user_uuid: str):
-    user = await UserDAO.find_one_or_none(uuid=user_uuid)
-    return user
+@router_user.get("/all")
+async def get_user_by_id(current_user=Depends(get_current_user)):
+    if current_user.role_id == 1:
+        return await UserDAO.find_all()
+    raise PermissionDeniedException

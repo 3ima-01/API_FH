@@ -32,4 +32,4 @@ class Point(Base):
         onupdate=func.now(),
     )
 
-    user = relationship("User", back_populates="poins")
+    user = relationship("User", back_populates="points")
