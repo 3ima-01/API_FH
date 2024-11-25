@@ -2,11 +2,11 @@ import enum
 
 
 class StatusEnum(str, enum.Enum):
-    published = "опубликован"
-    deleted = "удален"
-    under_moderation = "на модерации"
-    draft = "черновик"
-    scheduled = "отложенная публикация"
+    PUBLISHED = "опубликован"
+    DELETED = "удален"
+    UNDER_MODERATION = "на модерации"
+    DRAFT = "черновик"
+    SCHEDULED = "отложенная публикация"
 
 
 class FishEnum(str, enum.Enum):

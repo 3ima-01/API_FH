@@ -1,28 +1,37 @@
 from uuid import UUID, uuid4
-from sqlalchemy import text, CHAR, String
+from sqlalchemy import ForeignKey, text, CHAR, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
 
+from app.auth.models import Roles
 
-class User(Base):
+
+class Users(Base):
     __tablename__ = "users"
-    uuid: Mapped[UUID] = mapped_column(CHAR(36), primary_key=True, default=uuid4)
+    user_id: Mapped[UUID] = mapped_column(CHAR(36), primary_key=True, default=uuid4)
     email: Mapped[str] = mapped_column(String(255), unique=True)
     password: Mapped[str] = mapped_column(String(255))
 
-    role_id: Mapped[int] = mapped_column(default=text("0"), server_default=text("0"))
+    role_id: Mapped[int] = mapped_column(ForeignKey("roles.id"), default=1)
     is_blocked: Mapped[bool] = mapped_column(
         default=text("False"), server_default=text("False")
     )
 
-    profile = relationship("Profile", back_populates="user")
-    points = relationship("Point", back_populates="user")
+    role: Mapped["Roles"] = relationship("Roles", back_populates="user")
+    profile: Mapped["Profiles"] = relationship("Profiles", back_populates="user")
+    points: Mapped["Points"] = relationship("Points", back_populates="user")
+
+    def __str__(self):
+        return self.email
 
 
 class UnverifiedUsers(Base):
     __tablename__ = "unverified_users"
-    uuid: Mapped[UUID] = mapped_column(CHAR(36), primary_key=True, default=uuid4)
+    user_id: Mapped[UUID] = mapped_column(CHAR(36), primary_key=True, default=uuid4)
     email: Mapped[str] = mapped_column(String(255), unique=True)
     password: Mapped[str] = mapped_column(String(255))
     verify_code: Mapped[str] = mapped_column(String(255), unique=True)
+
+    def __str__(self):
+        return self.email

@@ -1,7 +1,7 @@
 from app.dao.base import BaseDAO
 
-from app.points.models import Point
+from app.points.models import Points
 
 
 class PointDAO(BaseDAO):
-    model = Point
+    model = Points

@@ -1,7 +1,7 @@
 from app.dao.base import BaseDAO
 
-from app.profiles.models import Profile
+from app.profiles.models import Profiles
 
 
 class ProfileDAO(BaseDAO):
-    model = Profile
+    model = Profiles

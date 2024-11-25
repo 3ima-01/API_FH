@@ -4,6 +4,7 @@ from app.auth import auth
 from app.users import schemas
 
 from app.users.dao import UserDAO, UnverifiedUsersDAO
+from app.auth.dao import PermissionsDAO
 from app.profiles.dao import ProfileDAO
 
 from app.users.dependencies import get_current_user, generate_verify_code
@@ -55,10 +56,6 @@ async def register_user(email: str, verify_code):
         email=user_data.email,
         password=user_data.password,
     )
-    new_user = await UserDAO.find_one_or_none(email=user_data.email)
-    await ProfileDAO.create(user_uuid=new_user.uuid, name=new_user.uuid)
-
-    await UnverifiedUsersDAO.delete(email=user_data.email)
     return {"details": "Пользователь успешно создан"}
 
 
@@ -67,7 +64,10 @@ async def login_user(response: Response, user_data: schemas.User):
     user = await UserDAO.find_one_or_none(email=user_data.email)
     if not (user and auth.verify_password(user_data.password, user.password)):
         raise UserLoginException
-    access_token = auth.create_access_token({"sub": str(user.uuid)})
+    permissions = await PermissionsDAO.find_all_permissions_by_role(user.role_id)
+    access_token = auth.create_access_token(
+        {"sub": str(user.uuid), "permissions": permissions}
+    )
     response.set_cookie("assistant_fishing", access_token, httponly=True)
     return access_token
 

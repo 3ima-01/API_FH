@@ -10,9 +10,14 @@ from alembic import context
 from app.database import Base
 from app.config import settings
 
-from app.users.models import User, UnverifiedUsers
-from app.profiles.models import Profile
-from app.points.models import Point
+from app.auth.models import Roles, Permissions, Role_Permissions
+from app.users.models import Users, UnverifiedUsers
+from app.profiles.models import Profiles
+
+from app.points.models import Points
+from app.parts.models import Coils, Rods
+from app.cafe.models import Cafe
+from app.trophys.models import Trophys
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

@@ -14,9 +14,8 @@ router_point = APIRouter(
 
 
 @router_point.post("/create")
-async def create_point(
-    point_data: schemas.Point, current_user=Depends(get_current_user)
-):
+async def create_point(point_data: schemas.Point, user_data=Depends(get_current_user)):
+    current_user, _ = user_data
     new_point = await PointDAO.create(
         user_uuid=current_user.uuid,
         title=point_data.title,
@@ -29,7 +28,8 @@ async def create_point(
 
 
 @router_point.get("/")
-async def get_user_points(current_user=Depends(get_current_user)):
+async def get_user_points(user_data=Depends(get_current_user)):
+    current_user, _ = user_data
     return await PointDAO.find_all(user_uuid=current_user.uuid)
 
 
@@ -40,8 +40,9 @@ async def get_point_bu_id(point_uuid: str):
 
 @router_point.patch("/{point_uuid}/update")
 async def update_point(
-    point_uuid: str, point_data: schemas.Point, current_user=Depends(get_current_user)
+    point_uuid: str, point_data: schemas.Point, user_data=Depends(get_current_user)
 ):
+    current_user, _ = user_data
     old_point = await PointDAO.find_one_or_none(uuid=point_uuid)
     if not old_point:
         raise PointNotFoundException
